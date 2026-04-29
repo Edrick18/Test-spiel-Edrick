@@ -1,8 +1,8 @@
 // Shakes & Fidget Clone - Mit Online-Login-System (Backend API)
 // Konto erforderlich: Name + E-Mail + Passwort
 
-// API URL: Vite proxy leitet /api Anfragen an Backend weiter
-const API_BASE = '/api'
+// API URL: Direkt an Backend (localhost:3000)
+const API_BASE = 'http://localhost:3000/api'
 
 // ===== Backend API Account System =====
 let currentUser = null
