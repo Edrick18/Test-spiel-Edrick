@@ -2,26 +2,22 @@ services:
   # Backend Service (Web Service)
   - type: web
     name: Test-spiel-Edrick-backend
-    env:
+    env: node
+    plan: starter
+    numInstances: 1
+    healthCheckPath: /api/health
+    buildCommand: cd server && npm install && npm run build
+    startCommand: cd server && npm start
+    envVars:
       - key: NODE_ENV
         value: production
       - key: DATABASE_URL
         fromDatabase:
           name: Test-spiel-Edrick-db
-    plan: starter  # Free tier
-    numInstances: 1
-    healthCheckPath: /api/health
-    runtime: node
-    buildCommand: cd server && npm install && npm run build
-    startCommand: cd server && npm start
-    envSpecificDetails:
-      - envVarKey: DATABASE_URL
-        description: Auto-provided by Render PostgreSQL
-
+    
   # PostgreSQL Database
   - type: pserv
     name: Test-spiel-Edrick-db
+    plan: starter
     databaseName: game_db
     user: admin
-    plan: starter  # Free tier (limited storage)
-
