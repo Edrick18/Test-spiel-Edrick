@@ -25,18 +25,18 @@ async function apiRequest(endpoint, method = 'GET', body = null) {
   return data
 }
 
-async function createAccount(username, email, password) {
+async function createAccount(username, password) {
   try {
-    const result = await apiRequest('/auth/register', 'POST', { username, email, password })
+    const result = await apiRequest('/auth/register', 'POST', { username, password })
     return { success: true, user: result }
   } catch (error) {
     return { error: error.message }
   }
 }
 
-async function login(email, password) {
+async function login(username, password) {
   try {
-    const user = await apiRequest('/auth/login', 'POST', { email, password })
+    const user = await apiRequest('/auth/login', 'POST', { username, password })
     currentUser = user
     localStorage.setItem('sfg_user', JSON.stringify(user))
     return { success: true, user }
@@ -446,6 +446,7 @@ function showResult(scene, won, gold, xp, drop) {
 // ===== Login Scene =====
 class LoginScene extends Phaser.Scene {
   constructor() { super({ key: 'LoginScene' }) }
+  
   create() {
     const w = this.cameras.main.width, h = this.cameras.main.height
     this.cameras.main.setBackgroundColor('#1a1a2e')
@@ -453,50 +454,100 @@ class LoginScene extends Phaser.Scene {
     // Check if already logged in
     const loggedIn = getLoggedInUser()
     if (loggedIn) {
-      this.scene.start('CharacterSelect', { username: loggedIn.username || loggedIn.email })
+      this.scene.start('CharacterSelect', { username: loggedIn.username })
       return
     }
     
     // Title
-    this.add.text(w/2, 100, 'Shakes & Fidget Clone', { fontSize: '36px', color: '#ffd700', fontStyle: 'bold', stroke: '#000', strokeThickness: 4 }).setOrigin(0.5)
-    this.add.text(w/2, 150, 'Bitte einloggen', { fontSize: '20px', color: '#fff' }).setOrigin(0.5)
+    this.add.text(w/2, 80, 'Shakes & Fidget Clone', { fontSize: '36px', color: '#ffd700', fontStyle: 'bold', stroke: '#000', strokeThickness: 4 }).setOrigin(0.5)
+    this.add.text(w/2, 130, 'Bitte einloggen oder Konto erstellen', { fontSize: '18px', color: '#ccc' }).setOrigin(0.5)
     
-    // Email input
-    this.add.text(w/2, 220, 'E-Mail:', { fontSize: '18px', color: '#fff' }).setOrigin(0.5)
-    const emailBtn = this.add.text(w/2, 250, '[ E-Mail eingeben ]', { fontSize: '18px', color: '#00ff00', backgroundColor: '#003300', padding: {x:15,y:8} }).setOrigin(0.5).setInteractive()
-    let email = ''
-    emailBtn.on('pointerdown', () => {
-      const e = prompt('E-Mail eingeben:')
-      if (e && e.trim()) { email = e.trim(); emailBtn.setText('E-Mail: ' + email) }
+    // Input fields background
+    const bg = this.add.graphics()
+    bg.fillStyle(0x002200, 0.8)
+    bg.fillRoundedRect(w/2 - 200, 170, 400, 280, 10)
+    
+    // Username input
+    this.add.text(w/2, 200, 'Benutzername:', { fontSize: '18px', color: '#fff' }).setOrigin(0.5)
+    this.usernameText = this.add.text(w/2, 230, '', { fontSize: '16px', color: '#00ff00', backgroundColor: '#001100', padding: {x:10,y:5} }).setOrigin(0.5)
+    const usernameInput = this.add.text(w/2, 260, '[ Benutzername eingeben ]', { fontSize: '16px', color: '#00aa00', backgroundColor: '#003300', padding: {x:15,y:8} }).setOrigin(0.5).setInteractive()
+    usernameInput.on('pointerdown', () => {
+      const input = document.createElement('input')
+      input.type = 'text'
+      input.style.position = 'absolute'
+      input.style.left = (window.innerWidth/2 - 150) + 'px'
+      input.style.top = '300px'
+      input.style.width = '300px'
+      input.style.fontSize = '16px'
+      input.style.zIndex = '1000'
+      input.placeholder = 'Benutzername...'
+      document.body.appendChild(input)
+      input.focus()
+      input.onkeydown = (e) => {
+        if (e.key === 'Enter') {
+          this.usernameText.setText(input.value)
+          document.body.removeChild(input)
+        }
+      }
+      input.onblur = () => {
+        this.usernameText.setText(input.value)
+        if (document.body.contains(input)) document.body.removeChild(input)
+      }
     })
     
     // Password input
     this.add.text(w/2, 300, 'Passwort:', { fontSize: '18px', color: '#fff' }).setOrigin(0.5)
-    const pwBtn = this.add.text(w/2, 330, '[ Passwort eingeben ]', { fontSize: '18px', color: '#00ff00', backgroundColor: '#003300', padding: {x:15,y:8} }).setOrigin(0.5).setInteractive()
-    let password = ''
-    pwBtn.on('pointerdown', () => {
-      const p = prompt('Passwort eingeben:')
-      if (p) { password = p; pwBtn.setText('Passwort: ****') }
+    this.passwordText = this.add.text(w/2, 330, '', { fontSize: '16px', color: '#00ff00', backgroundColor: '#001100', padding: {x:10,y:5} }).setOrigin(0.5)
+    const passwordInput = this.add.text(w/2, 360, '[ Passwort eingeben ]', { fontSize: '16px', color: '#00aa00', backgroundColor: '#003300', padding: {x:15,y:8} }).setOrigin(0.5).setInteractive()
+    passwordInput.on('pointerdown', () => {
+      const input = document.createElement('input')
+      input.type = 'password'
+      input.style.position = 'absolute'
+      input.style.left = (window.innerWidth/2 - 150) + 'px'
+      input.style.top = '400px'
+      input.style.width = '300px'
+      input.style.fontSize = '16px'
+      input.style.zIndex = '1000'
+      input.placeholder = 'Passwort...'
+      document.body.appendChild(input)
+      input.focus()
+      input.onkeydown = (e) => {
+        if (e.key === 'Enter') {
+          this.passwordText.setText('****')
+          this.passwordValue = input.value
+          document.body.removeChild(input)
+        }
+      }
+      input.onblur = () => {
+        this.passwordText.setText('****')
+        this.passwordValue = input.value
+        if (document.body.contains(input)) document.body.removeChild(input)
+      }
     })
     
     // Login button
-    const loginBtn = this.add.text(w/2, 400, '[ Einloggen ]', { fontSize: '22px', color: '#fff', backgroundColor: '#006600', padding: {x:20,y:10}, fontStyle: 'bold' }).setOrigin(0.5).setInteractive()
-    loginBtn.on('pointerdown', () => {
-      if (!email || !password) { alert('E-Mail und Passwort erforderlich!'); return }
-      const result = login(email, password)
-      if (result.error) { alert(result.error); return }
-      this.scene.start('CharacterSelect', { username: result.user.username || result.user.email })
+    const loginBtn = this.add.text(w/2, 410, '[ Einloggen ]', { fontSize: '22px', color: '#fff', backgroundColor: '#006600', padding: {x:20,y:10}, fontStyle: 'bold' }).setOrigin(0.5).setInteractive()
+    loginBtn.on('pointerdown', async () => {
+      const username = this.usernameText.text
+      const password = this.passwordValue
+      if (!username || !password) { alert('Benutzername und Passwort erforderlich!'); return }
+      loginBtn.setText('Lade...')
+      const result = await login(username, password)
+      if (result.error) { alert(result.error); loginBtn.setText('[ Einloggen ]'); return }
+      this.scene.start('CharacterSelect', { username: result.user.username })
     })
     
     // Register button
-    const regBtn = this.add.text(w/2, 460, '[ Konto erstellen ]', { fontSize: '18px', color: '#00aaff', backgroundColor: '#002233', padding: {x:15,y:8} }).setOrigin(0.5).setInteractive()
-    regBtn.on('pointerdown', () => {
-      if (!email || !password) { alert('E-Mail und Passwort erforderlich!'); return }
-      const username = prompt('Benutzernamen wählen:')
-      if (!username || !username.trim()) return
-      const result = createAccount(username.trim(), email, password)
-      if (result.error) { alert(result.error); return }
-      alert('Konto erstellt! Jetzt einloggen.')
+    const regBtn = this.add.text(w/2, 470, '[ Konto erstellen ]', { fontSize: '18px', color: '#00aaff', backgroundColor: '#002233', padding: {x:15,y:8} }).setOrigin(0.5).setInteractive()
+    regBtn.on('pointerdown', async () => {
+      const username = this.usernameText.text
+      const password = this.passwordValue
+      if (!username || !password) { alert('Benutzername und Passwort erforderlich!'); return }
+      regBtn.setText('Erstelle...')
+      const result = await createAccount(username, password)
+      if (result.error) { alert(result.error); regBtn.setText('[ Konto erstellen ]'); return }
+      alert('Konto erstellt! Du bist jetzt eingeloggt.')
+      this.scene.start('CharacterSelect', { username: username })
     })
   }
 }

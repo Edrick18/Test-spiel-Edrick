@@ -1,16 +1,25 @@
 @echo off
-echo Starte Shakes & Fidget Clone...
+echo ================================
+echo  Shakes & Fidget Clone - Startet Spiel
+echo ================================
 echo.
 
-echo Starte Backend...
-start "Backend" cmd /k "cd /d "%~dp0server" && npm run dev"
+echo [1/3] Starte Backend (Port 3000)...
+cd server
+start "Backend" cmd /k "npm start"
+cd ..
 
-timeout /t 3 /nobreak > nul
+echo [2/3] Warte 5 Sekunden auf Backend...
+timeout /t 5 /nobreak >nul
 
-echo Starte Frontend...
-start "Frontend" cmd /k "cd /d "%~dp0" && npm run dev"
+echo [3/3] Starte Frontend (Port 5173)...
+start "Frontend" cmd /k "npm run dev"
 
 echo.
-echo Frontend und Backend werden gestartet...
-echo Browser öffnet sich automatisch unter http://localhost:5173
-pause
+echo ================================
+echo  FERTIG! 
+echo  Browser oeffnen: http://localhost:5173
+echo ================================
+echo.
+timeout /t 3 /nobreak >nul
+start http://localhost:5173
