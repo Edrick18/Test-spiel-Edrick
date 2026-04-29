@@ -1,10 +1,8 @@
 // Shakes & Fidget Clone - Mit Online-Login-System (Backend API)
 // Konto erforderlich: Name + E-Mail + Passwort
 
-// API URL: In Produktion von Vercel Env-Variable, sonst localhost
-const API_BASE = typeof import.meta !== 'undefined' && import.meta.env.VITE_API_URL 
-  ? import.meta.env.VITE_API_URL + '/api' 
-  : 'http://localhost:3000/api'
+// API URL: Vite proxy leitet /api Anfragen an Backend weiter
+const API_BASE = '/api'
 
 // ===== Backend API Account System =====
 let currentUser = null
