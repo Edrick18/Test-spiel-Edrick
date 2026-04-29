@@ -471,10 +471,11 @@ class LoginScene extends Phaser.Scene {
     this.usernameValue = ''
     
     this.usernameDisplay.on('pointerdown', () => {
-      const u = prompt('Benutzername eingeben:')
+      const u = prompt('Benutzername eingeben (neu eingeben!):')
       if (u && u.trim()) {
         this.usernameValue = u.trim()
         this.usernameDisplay.setText('Benutzername: ' + this.usernameValue)
+        console.log('Username set to:', this.usernameValue) // Debug
       }
     })
     
@@ -484,19 +485,22 @@ class LoginScene extends Phaser.Scene {
     this.passwordValue = ''
     
     this.passwordDisplay.on('pointerdown', () => {
-      const p = prompt('Passwort eingeben:')
+      const p = prompt('Passwort eingeben (neu eingeben!):')
       if (p) {
         this.passwordValue = p
         this.passwordDisplay.setText('Passwort: ****')
+        console.log('Password set (length):', this.passwordValue.length) // Debug
       }
     })
     
     // Login button
     const loginBtn = this.add.text(w/2, 380, '[ Einloggen ]', { fontSize: '22px', color: '#fff', backgroundColor: '#006600', padding: {x:20,y:10}, fontStyle: 'bold' }).setOrigin(0.5).setInteractive()
     loginBtn.on('pointerdown', async () => {
+      console.log('Login clicked - Username:', this.usernameValue, 'Password length:', this.passwordValue.length)
       if (!this.usernameValue || !this.passwordValue) { alert('Benutzername und Passwort erforderlich!'); return }
       loginBtn.setText('Lade...')
       const result = await login(this.usernameValue, this.passwordValue)
+      console.log('Login result:', result)
       if (result.error) { alert(result.error); loginBtn.setText('[ Einloggen ]'); return }
       this.scene.start('CharacterSelect', { username: result.user.username })
     })
@@ -504,9 +508,11 @@ class LoginScene extends Phaser.Scene {
     // Register button
     const regBtn = this.add.text(w/2, 440, '[ Konto erstellen ]', { fontSize: '18px', color: '#00aaff', backgroundColor: '#002233', padding: {x:15,y:8} }).setOrigin(0.5).setInteractive()
     regBtn.on('pointerdown', async () => {
+      console.log('Register clicked - Username:', this.usernameValue, 'Password length:', this.passwordValue.length)
       if (!this.usernameValue || !this.passwordValue) { alert('Benutzername und Passwort erforderlich!'); return }
       regBtn.setText('Erstelle...')
       const result = await createAccount(this.usernameValue, this.passwordValue)
+      console.log('Register result:', result)
       if (result.error) { alert(result.error); regBtn.setText('[ Konto erstellen ]'); return }
       alert('Konto erstellt! Du bist jetzt eingeloggt.')
       this.scene.start('CharacterSelect', { username: this.usernameValue })
