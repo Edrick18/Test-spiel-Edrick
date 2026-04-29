@@ -15,9 +15,9 @@ services:
         fromDatabase:
           name: Test-spiel-Edrick-db
     
+databases:
   # PostgreSQL Database
-  - type: pserv
-    name: Test-spiel-Edrick-db
-    plan: starter
+  - name: Test-spiel-Edrick-db
     databaseName: game_db
     user: admin
+    plan: starter
