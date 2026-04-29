@@ -1,13 +1,13 @@
 services:
   # Backend Service (Web Service)
   - type: web
-    name: shakes-fidget-backend
+    name: Test-spiel-Edrick-backend
     env:
       - key: NODE_ENV
         value: production
       - key: DATABASE_URL
         fromDatabase:
-          name: shakes-fidget-db
+          name: Test-spiel-Edrick-db
     plan: starter  # Free tier
     numInstances: 1
     healthCheckPath: /api/health
@@ -20,7 +20,7 @@ services:
 
   # PostgreSQL Database
   - type: pserv
-    name: shakes-fidget-db
+    name: Test-spiel-Edrick-db
     databaseName: game_db
     user: admin
     plan: starter  # Free tier (limited storage)
