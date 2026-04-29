@@ -467,88 +467,86 @@ class LoginScene extends Phaser.Scene {
     bg.fillStyle(0x002200, 0.8)
     bg.fillRoundedRect(w/2 - 200, 170, 400, 280, 10)
     
-    // Username input
+    // Username input - direktes Eingabefeld
     this.add.text(w/2, 200, 'Benutzername:', { fontSize: '18px', color: '#fff' }).setOrigin(0.5)
-    this.usernameText = this.add.text(w/2, 230, '', { fontSize: '16px', color: '#00ff00', backgroundColor: '#001100', padding: {x:10,y:5} }).setOrigin(0.5)
-    const usernameInput = this.add.text(w/2, 260, '[ Benutzername eingeben ]', { fontSize: '16px', color: '#00aa00', backgroundColor: '#003300', padding: {x:15,y:8} }).setOrigin(0.5).setInteractive()
-    usernameInput.on('pointerdown', () => {
-      const input = document.createElement('input')
-      input.type = 'text'
-      input.style.position = 'absolute'
-      input.style.left = (window.innerWidth/2 - 150) + 'px'
-      input.style.top = '300px'
-      input.style.width = '300px'
-      input.style.fontSize = '16px'
-      input.style.zIndex = '1000'
-      input.placeholder = 'Benutzername...'
-      document.body.appendChild(input)
-      input.focus()
-      input.onkeydown = (e) => {
-        if (e.key === 'Enter') {
-          this.usernameText.setText(input.value)
-          document.body.removeChild(input)
-        }
-      }
-      input.onblur = () => {
-        this.usernameText.setText(input.value)
-        if (document.body.contains(input)) document.body.removeChild(input)
-      }
-    })
     
-    // Password input
-    this.add.text(w/2, 300, 'Passwort:', { fontSize: '18px', color: '#fff' }).setOrigin(0.5)
-    this.passwordText = this.add.text(w/2, 330, '', { fontSize: '16px', color: '#00ff00', backgroundColor: '#001100', padding: {x:10,y:5} }).setOrigin(0.5)
-    const passwordInput = this.add.text(w/2, 360, '[ Passwort eingeben ]', { fontSize: '16px', color: '#00aa00', backgroundColor: '#003300', padding: {x:15,y:8} }).setOrigin(0.5).setInteractive()
-    passwordInput.on('pointerdown', () => {
-      const input = document.createElement('input')
-      input.type = 'password'
-      input.style.position = 'absolute'
-      input.style.left = (window.innerWidth/2 - 150) + 'px'
-      input.style.top = '400px'
-      input.style.width = '300px'
-      input.style.fontSize = '16px'
-      input.style.zIndex = '1000'
-      input.placeholder = 'Passwort...'
-      document.body.appendChild(input)
-      input.focus()
-      input.onkeydown = (e) => {
-        if (e.key === 'Enter') {
-          this.passwordText.setText('****')
-          this.passwordValue = input.value
-          document.body.removeChild(input)
-        }
-      }
-      input.onblur = () => {
-        this.passwordText.setText('****')
-        this.passwordValue = input.value
-        if (document.body.contains(input)) document.body.removeChild(input)
-      }
-    })
+    this.usernameInput = document.createElement('input')
+    this.usernameInput.type = 'text'
+    this.usernameInput.placeholder = 'Hier klicken und tippen...'
+    this.usernameInput.style.position = 'absolute'
+    this.usernameInput.style.left = (w/2 - 150) + 'px'
+    this.usernameInput.style.top = '220px'
+    this.usernameInput.style.width = '300px'
+    this.usernameInput.style.height = '30px'
+    this.usernameInput.style.fontSize = '16px'
+    this.usernameInput.style.padding = '5px'
+    this.usernameInput.style.zIndex = '1000'
+    this.usernameInput.style.backgroundColor = '#001100'
+    this.usernameInput.style.color = '#00ff00'
+    this.usernameInput.style.border = '2px solid #00aa00'
+    this.usernameInput.style.borderRadius = '5px'
+    document.body.appendChild(this.usernameInput)
+    
+    // Password input - direktes Eingabefeld
+    this.add.text(w/2, 280, 'Passwort:', { fontSize: '18px', color: '#fff' }).setOrigin(0.5)
+    
+    this.passwordInput = document.createElement('input')
+    this.passwordInput.type = 'password'
+    this.passwordInput.placeholder = 'Hier klicken und tippen...'
+    this.passwordInput.style.position = 'absolute'
+    this.passwordInput.style.left = (w/2 - 150) + 'px'
+    this.passwordInput.style.top = '300px'
+    this.passwordInput.style.width = '300px'
+    this.passwordInput.style.height = '30px'
+    this.passwordInput.style.fontSize = '16px'
+    this.passwordInput.style.padding = '5px'
+    this.passwordInput.style.zIndex = '1000'
+    this.passwordInput.style.backgroundColor = '#001100'
+    this.passwordInput.style.color = '#00ff00'
+    this.passwordInput.style.border = '2px solid #00aa00'
+    this.passwordInput.style.borderRadius = '5px'
+    document.body.appendChild(this.passwordInput)
     
     // Login button
-    const loginBtn = this.add.text(w/2, 410, '[ Einloggen ]', { fontSize: '22px', color: '#fff', backgroundColor: '#006600', padding: {x:20,y:10}, fontStyle: 'bold' }).setOrigin(0.5).setInteractive()
+    const loginBtn = this.add.text(w/2, 380, '[ Einloggen ]', { fontSize: '22px', color: '#fff', backgroundColor: '#006600', padding: {x:20,y:10}, fontStyle: 'bold' }).setOrigin(0.5).setInteractive()
     loginBtn.on('pointerdown', async () => {
-      const username = this.usernameText.text
-      const password = this.passwordValue
+      const username = this.usernameInput.value
+      const password = this.passwordInput.value
       if (!username || !password) { alert('Benutzername und Passwort erforderlich!'); return }
       loginBtn.setText('Lade...')
       const result = await login(username, password)
       if (result.error) { alert(result.error); loginBtn.setText('[ Einloggen ]'); return }
+      // Remove inputs
+      if (document.body.contains(this.usernameInput)) document.body.removeChild(this.usernameInput)
+      if (document.body.contains(this.passwordInput)) document.body.removeChild(this.passwordInput)
       this.scene.start('CharacterSelect', { username: result.user.username })
     })
     
     // Register button
-    const regBtn = this.add.text(w/2, 470, '[ Konto erstellen ]', { fontSize: '18px', color: '#00aaff', backgroundColor: '#002233', padding: {x:15,y:8} }).setOrigin(0.5).setInteractive()
+    const regBtn = this.add.text(w/2, 440, '[ Konto erstellen ]', { fontSize: '18px', color: '#00aaff', backgroundColor: '#002233', padding: {x:15,y:8} }).setOrigin(0.5).setInteractive()
     regBtn.on('pointerdown', async () => {
-      const username = this.usernameText.text
-      const password = this.passwordValue
+      const username = this.usernameInput.value
+      const password = this.passwordInput.value
       if (!username || !password) { alert('Benutzername und Passwort erforderlich!'); return }
       regBtn.setText('Erstelle...')
       const result = await createAccount(username, password)
       if (result.error) { alert(result.error); regBtn.setText('[ Konto erstellen ]'); return }
       alert('Konto erstellt! Du bist jetzt eingeloggt.')
+      // Remove inputs
+      if (document.body.contains(this.usernameInput)) document.body.removeChild(this.usernameInput)
+      if (document.body.contains(this.passwordInput)) document.body.removeChild(this.passwordInput)
       this.scene.start('CharacterSelect', { username: username })
     })
+  }
+  
+  shutdown() {
+    // Clean up inputs when leaving scene
+    if (this.usernameInput && document.body.contains(this.usernameInput)) {
+      document.body.removeChild(this.usernameInput)
+    }
+    if (this.passwordInput && document.body.contains(this.passwordInput)) {
+      document.body.removeChild(this.passwordInput)
+    }
   }
 }
 
