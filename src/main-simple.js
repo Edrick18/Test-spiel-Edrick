@@ -1,8 +1,8 @@
 // Shakes & Fidget Clone - Mit Online-Login-System (Backend API)
 // Konto erforderlich: Name + E-Mail + Passwort
 
-// API URL: Backend-Tunnel (feste URL)
-const API_BASE = 'https://shakes-game-edrick-api.loca.lt/api'
+// API URL: Relativ (Vite Proxy leitet an Backend weiter)
+const API_BASE = '/api'
 
 // ===== Backend API Account System =====
 let currentUser = null

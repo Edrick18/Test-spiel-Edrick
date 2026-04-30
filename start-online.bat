@@ -1,33 +1,38 @@
 @echo off
-echo ================================
-echo  Shakes & Fidget Clone - Online fuer Tester
-echo ================================
+echo ===============================
+echo  Shakes & Fidget Clone - Online Server
+echo ===============================
 echo.
 
-echo [1/4] Starte Backend (Port 3000)...
+echo [1/3] Starte Backend (Port 3000)...
 cd server
-start "Backend" cmd /k "npm start"
+start "Backend" cmd /k "title Backend && node better-server.js"
 cd ..
-timeout /t 5 /nobreak >nul
+timeout /t 8 /nobreak >nul
 
-echo [2/4] Starte Frontend (Port 5173)...
-start "Frontend" cmd /k "npm run dev"
-timeout /t 5 /nobreak >nul
+echo [2/3] Starte Frontend (Port 5173)...
+start "Frontend" cmd /k "title Frontend && npm run dev"
+timeout /t 10 /nobreak >nul
 
-echo [3/4] Erstelle Online-Tunnel...
-echo Deine Tester-URL erscheint gleich im "Tunnel" Fenster!
-start "Tunnel" cmd /k "lt --port 5173"
+echo [3/3] Erstelle ONLINE-Tunnel (NUR EINEN!)...
+echo WICHTIG: Diese URL aendert sich NIE!
+echo URL: https://shakes-game-edrick.loca.lt
+echo.
+start "Tunnel" cmd /k "title Tunnel && lt --port 5173 --subdomain shakes-game-edrick"
 
 echo.
-echo ================================
-echo  WICHTIG FUER TESTER:
-echo ================================
-echo 1. Sende ihnen die URL aus dem "Tunnel" Fenster
-echo 2. Tester oeffnen die URL
-echo 3. Klicken auf "Click to Continue"
-echo 4. Spiel ist erreichbar!
+echo ===============================
+echo  FERTIG! EINE Feste URL:
+echo ===============================
 echo.
-echo Die URL sieht aus wie: https://xxx.loca.lt
-echo ================================
+echo URL: https://shakes-game-edrick.loca.lt
+echo.
+echo Tester muessen:
+echo 1. URL oeffnen: https://shakes-game-edrick.loca.lt
+echo 2. Klicken auf "Click to Continue" (NUR 1x!)
+echo 3. Spiel ist erreichbar!
+echo.
+echo (Backend ist ueber den Tunnel mit drin!)
+echo ===============================
 echo.
 pause
